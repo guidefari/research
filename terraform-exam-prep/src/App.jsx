@@ -6,6 +6,8 @@ import ThemeToggle from './components/ThemeToggle.jsx'
 
 const PROGRESS_KEY = 'tf-exam-progress'
 const THEME_KEY = 'tf-theme'
+const CURRENT_TOPIC_KEY = 'tf-current-topic'
+const SCROLL_POSITIONS_KEY = 'tf-scroll-positions'
 
 function getInitialTheme() {
   const saved = localStorage.getItem(THEME_KEY)
@@ -21,10 +23,34 @@ function getInitialProgress() {
   return new Set()
 }
 
+function getInitialTopicSlug() {
+  const fallback = ALL_TOPICS[0].slug
+  try {
+    const raw = localStorage.getItem(CURRENT_TOPIC_KEY)
+    if (!raw) return fallback
+    const exists = ALL_TOPICS.some(t => t.slug === raw)
+    return exists ? raw : fallback
+  } catch {
+    return fallback
+  }
+}
+
+function getInitialScrollPositions() {
+  try {
+    const raw = localStorage.getItem(SCROLL_POSITIONS_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
 export default function App() {
-  const [currentSlug, setCurrentSlug] = useState(ALL_TOPICS[0].slug)
+  const [currentSlug, setCurrentSlug] = useState(() => getInitialTopicSlug())
   const [completedTopics, setCompletedTopics] = useState(() => getInitialProgress())
   const [theme, setTheme] = useState(() => getInitialTheme())
+  const [scrollPositions, setScrollPositions] = useState(() => getInitialScrollPositions())
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -36,9 +62,24 @@ export default function App() {
     localStorage.setItem(PROGRESS_KEY, JSON.stringify([...completedTopics]))
   }, [completedTopics])
 
+  useEffect(() => {
+    localStorage.setItem(CURRENT_TOPIC_KEY, currentSlug)
+  }, [currentSlug])
+
+  useEffect(() => {
+    localStorage.setItem(SCROLL_POSITIONS_KEY, JSON.stringify(scrollPositions))
+  }, [scrollPositions])
+
   const handleNavigate = (slug) => {
     setCurrentSlug(slug)
     setSidebarOpen(false)
+  }
+
+  const handleScrollPositionChange = (slug, scrollTop) => {
+    setScrollPositions(prev => {
+      if (prev[slug] === scrollTop) return prev
+      return { ...prev, [slug]: scrollTop }
+    })
   }
 
   const handleToggleComplete = (slug) => {
@@ -92,6 +133,8 @@ export default function App() {
             onNavigate={handleNavigate}
             onToggleComplete={handleToggleComplete}
             allTopics={ALL_TOPICS}
+            scrollPositions={scrollPositions}
+            onScrollPositionChange={handleScrollPositionChange}
           />
         </main>
       </div>

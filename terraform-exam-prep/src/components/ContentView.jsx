@@ -4,7 +4,15 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import 'highlight.js/styles/github.css'
 
-export default function ContentView({ topic, completedTopics, onNavigate, onToggleComplete, allTopics }) {
+export default function ContentView({
+  topic,
+  completedTopics,
+  onNavigate,
+  onToggleComplete,
+  allTopics,
+  scrollPositions,
+  onScrollPositionChange,
+}) {
   const scrollRef = useRef(null)
   const isDone = completedTopics.has(topic.slug)
   const currentIndex = allTopics.findIndex(t => t.slug === topic.slug)
@@ -13,7 +21,7 @@ export default function ContentView({ topic, completedTopics, onNavigate, onTogg
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0
+      scrollRef.current.scrollTop = scrollPositions[topic.slug] ?? 0
     }
   }, [topic.slug])
 
@@ -43,7 +51,11 @@ export default function ContentView({ topic, completedTopics, onNavigate, onTogg
   }
 
   return (
-    <div className="content-view" ref={scrollRef}>
+    <div
+      className="content-view"
+      ref={scrollRef}
+      onScroll={() => onScrollPositionChange(topic.slug, scrollRef.current?.scrollTop ?? 0)}
+    >
       <div className="content-inner">
         <div className="content-toolbar">
           <button
