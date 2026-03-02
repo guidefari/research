@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "screenshots": "bun run screenshots/take-screenshots.js",
+    "playwright:install": "bunx playwright install chromium --with-deps"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -18,6 +20,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "playwright": "1.56.1",
     "vite": "^5.4.0"
   }
 }
