@@ -35,6 +35,7 @@
   --link-hover:   #4B31B8;
   --check:        #16A34A;
   --check-bg:     #DCFCE7;
+  --highlight-bg: #ffe58f;
 
   /* Layout */
   --sidebar-width: 280px;
@@ -60,6 +61,7 @@
   --link-hover:   #C4B5FD;
   --check:        #4ADE80;
   --check-bg:     #14532D;
+  --highlight-bg: #7c5d00;
 }
 
 /* ===========================
@@ -428,12 +430,58 @@ button {
   background: var(--check-bg);
 }
 
+.selection-popover {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  z-index: 300;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  padding: 4px;
+}
+
+.selection-popover-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.selection-popover-btn:hover {
+  background: var(--bg-hover);
+}
+
+.selection-popover-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 /* ===========================
    MARKDOWN BODY
 =========================== */
 
 .markdown-body {
   /* Vertical rhythm: all vertical spacing in multiples of --unit (1.7rem) */
+}
+
+.markdown-body .user-highlight {
+  background: var(--highlight-bg);
+  color: inherit;
+  border-radius: 0.12em;
+  padding: 0;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+::highlight(user-note-highlight) {
+  background: var(--highlight-bg);
 }
 
 /* Headings */

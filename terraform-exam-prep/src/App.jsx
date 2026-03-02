@@ -8,6 +8,7 @@ const PROGRESS_KEY = 'tf-exam-progress'
 const THEME_KEY = 'tf-theme'
 const CURRENT_TOPIC_KEY = 'tf-current-topic'
 const SCROLL_POSITIONS_KEY = 'tf-scroll-positions'
+const HIGHLIGHTS_KEY = 'tf-highlights-v1'
 
 function getInitialTheme() {
   const saved = localStorage.getItem(THEME_KEY)
@@ -46,11 +47,24 @@ function getInitialScrollPositions() {
   }
 }
 
+function getInitialHighlights() {
+  try {
+    const raw = localStorage.getItem(HIGHLIGHTS_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return {}
+    return parsed
+  } catch {
+    return {}
+  }
+}
+
 export default function App() {
   const [currentSlug, setCurrentSlug] = useState(() => getInitialTopicSlug())
   const [completedTopics, setCompletedTopics] = useState(() => getInitialProgress())
   const [theme, setTheme] = useState(() => getInitialTheme())
   const [scrollPositions, setScrollPositions] = useState(() => getInitialScrollPositions())
+  const [highlightsBySlug, setHighlightsBySlug] = useState(() => getInitialHighlights())
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -70,6 +84,10 @@ export default function App() {
     localStorage.setItem(SCROLL_POSITIONS_KEY, JSON.stringify(scrollPositions))
   }, [scrollPositions])
 
+  useEffect(() => {
+    localStorage.setItem(HIGHLIGHTS_KEY, JSON.stringify(highlightsBySlug))
+  }, [highlightsBySlug])
+
   const handleNavigate = (slug) => {
     setCurrentSlug(slug)
     setSidebarOpen(false)
@@ -88,6 +106,22 @@ export default function App() {
       if (next.has(slug)) next.delete(slug)
       else next.add(slug)
       return next
+    })
+  }
+
+  const handleCreateHighlight = (slug, highlight) => {
+    setHighlightsBySlug(prev => {
+      const existing = Array.isArray(prev[slug]) ? prev[slug] : []
+      const next = [...existing, highlight]
+      return { ...prev, [slug]: next }
+    })
+  }
+
+  const handleRemoveHighlight = (slug, id) => {
+    setHighlightsBySlug(prev => {
+      const existing = Array.isArray(prev[slug]) ? prev[slug] : []
+      const next = existing.filter(h => h.id !== id)
+      return { ...prev, [slug]: next }
     })
   }
 
@@ -135,6 +169,9 @@ export default function App() {
             allTopics={ALL_TOPICS}
             scrollPositions={scrollPositions}
             onScrollPositionChange={handleScrollPositionChange}
+            highlights={highlightsBySlug[currentSlug] ?? []}
+            onCreateHighlight={handleCreateHighlight}
+            onRemoveHighlight={handleRemoveHighlight}
           />
         </main>
       </div>
