@@ -17,6 +17,55 @@ Think of it like `npm install` for Node or `go mod download` for Go — it resol
 
 ---
 
+## Backend 101
+
+A **Terraform backend** is the mechanism Terraform uses to:
+
+1. Store state (`terraform.tfstate`)
+2. Read/write that state during plan/apply
+3. Coordinate locking (for backends that support it)
+
+If providers are "how Terraform talks to cloud APIs", backend is "where Terraform remembers reality."
+
+### Why It Matters
+
+- Terraform decisions come from comparing **config** vs **state** vs **real world**.
+- If state is wrong, lost, or concurrently modified, your plans can be wrong.
+- In teams, backend choice determines whether collaboration is safe.
+
+### Local vs Remote Backends (Quick View)
+
+| Backend Type | Where state lives | Team-safe | Locking |
+|---|---|---|---|
+| Local (`backend "local"` or implicit default) | On your machine (`terraform.tfstate`) | No | No |
+| Remote (S3, HCP Terraform, etc.) | Shared remote system | Yes | Usually yes |
+
+### Minimal Examples
+
+```hcl
+# Local backend (default)
+terraform {
+  backend "local" {
+    path = "terraform.tfstate"
+  }
+}
+```
+
+```hcl
+# Remote backend example (S3)
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state"
+    key    = "prod/network/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+```
+
+> **Rule of thumb:** Local backend is fine for learning. For shared/team environments, use a remote backend from day one.
+
+---
+
 ## What Gets Created
 
 After `terraform init`:
@@ -209,6 +258,93 @@ module "vpc" {
 ```
 
 After `terraform init`, the module is cached in `.terraform/modules/`.
+
+---
+
+## Modules vs Providers vs Provider Binaries
+
+This is one of the most common points of confusion.
+
+### Quick Definitions
+
+- **Module**: Terraform configuration code (`.tf` files) that groups resources into a reusable unit.
+- **Provider**: Terraform plugin interface for an API/service (AWS, Azure, Kubernetes, GitHub, etc.).
+- **Provider binary**: The compiled executable file Terraform downloads and runs for a provider.
+
+### Mental Model
+
+Think of it like this:
+
+- A **module** is your recipe.
+- A **provider** is the appliance type the recipe needs (oven, blender).
+- A **provider binary** is the actual installed appliance on disk.
+
+### Where Each Lives
+
+```text
+your-project/
+├── main.tf
+├── modules/                        # optional local module source code
+│   └── networking/
+│       └── main.tf
+└── .terraform/                     # created by init
+    ├── modules/                    # downloaded/cached module source code
+    │   └── vpc/
+    └── providers/                  # downloaded provider binaries
+        └── registry.terraform.io/hashicorp/aws/5.x.x/.../terraform-provider-aws_*
+```
+
+### Execution Flow During `init`
+
+```text
+Read .tf config
+   ├─ find module blocks      -> download/cache module source code
+   ├─ find required_providers -> resolve versions
+   └─ download provider binaries + write .terraform.lock.hcl
+```
+
+### Key Difference in Practice
+
+| Thing | Purpose | Downloaded by `init` | Version pinning |
+|---|---|---|---|
+| Module | Reusable Terraform code | Yes (`.terraform/modules`) | In `module` block (`version` if registry module) |
+| Provider | API integration plugin type | Yes (as binary) | Constraints in `required_providers` |
+| Provider binary | Actual executable plugin file | Yes (`.terraform/providers`) | Exact version + checksum in `.terraform.lock.hcl` |
+
+### Important Exam Detail
+
+`.terraform.lock.hcl` locks **provider binaries**, not module versions.
+
+So this is true:
+- provider exact versions/checksums are locked in lock file.
+- module version selection is controlled in `module` blocks (or git/local source refs), not lock file.
+
+### Example: Both Together
+
+```hcl
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+module "network" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
+}
+```
+
+In this example:
+- `module "network"` downloads Terraform code for the VPC module.
+- `required_providers.aws` downloads the AWS provider binary Terraform executes.
+- The lock file pins the AWS provider binary, not the module.
 
 ---
 

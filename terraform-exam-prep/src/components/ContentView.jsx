@@ -108,6 +108,11 @@ function supportsCustomHighlights() {
   )
 }
 
+function hasExpandedSelection() {
+  const selection = window.getSelection()
+  return !!selection && !selection.isCollapsed && selection.rangeCount > 0
+}
+
 function resolveHighlightPosition(highlight, text) {
   const quote = String(highlight.quote ?? '')
   if (!quote) return null
@@ -185,7 +190,6 @@ export default function ContentView({
   const scrollRef = useRef(null)
   const articleRef = useRef(null)
   const resolvedHighlightsRef = useRef([])
-  const suppressSelectionPopupRef = useRef(false)
   const [popup, setPopup] = useState({ visible: false, x: 0, y: 0, mode: 'add', selection: null, highlightId: null })
 
   const isDone = completedTopics.has(topic.slug)
@@ -275,17 +279,11 @@ export default function ContentView({
   }
 
   const showPopupForSelection = () => {
-    if (suppressSelectionPopupRef.current) {
-      suppressSelectionPopupRef.current = false
-      return
-    }
-
     const root = articleRef.current
     if (!root) return
 
     const selection = window.getSelection()
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-      hidePopup()
       return
     }
 
@@ -347,12 +345,14 @@ export default function ContentView({
   }
 
   const handleHighlightClick = (event) => {
+    // If user is actively selecting text, let selection-driven highlight flow run.
+    if (hasExpandedSelection()) return
+
     const root = articleRef.current
     if (!root) return
 
     const markTarget = event.target.closest?.('mark[data-highlight-id]')
     if (markTarget) {
-      suppressSelectionPopupRef.current = true
       const id = markTarget.getAttribute('data-highlight-id')
       if (!id) return
       const rect = markTarget.getBoundingClientRect()
@@ -374,7 +374,6 @@ export default function ContentView({
     const hit = resolvedHighlightsRef.current.find(item => offset >= item.start && offset < item.end)
     if (!hit) return
 
-    suppressSelectionPopupRef.current = true
     window.getSelection()?.removeAllRanges()
     setPopup({
       visible: true,

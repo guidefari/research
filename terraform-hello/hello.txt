@@ -1,0 +1,1 @@
+Hello, Terraform! - once again I've changed contents!
