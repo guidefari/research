@@ -10,6 +10,6 @@ terraform {
 }
 
 resource "local_file" "hello" {
-  content = "Hello, Terraform!"
+  content = "Hello, Terraform! - I've changed contents!"
   filename = "${path.module}/hello.txt"
 }
