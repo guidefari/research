@@ -35,6 +35,13 @@ export default function ContentView({ topic, completedTopics, onNavigate, onTogg
     },
   }
 
+  const highlightOptions = {
+    // highlight.js doesn't ship native HCL; register HCL/Terraform as aliases of INI.
+    aliases: {
+      ini: ['hcl', 'terraform', 'tf'],
+    },
+  }
+
   return (
     <div className="content-view" ref={scrollRef}>
       <div className="content-inner">
@@ -64,7 +71,7 @@ export default function ContentView({ topic, completedTopics, onNavigate, onTogg
         <article className="markdown-body">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
+            rehypePlugins={[[rehypeHighlight, highlightOptions]]}
             components={components}
           >
             {topic.content}
