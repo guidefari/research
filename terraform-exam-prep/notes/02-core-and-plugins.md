@@ -133,10 +133,20 @@ provider "registry.terraform.io/hashicorp/aws" {
 
 ## Built-in Providers vs External Providers
 
-A small number of providers are **built into** Terraform Core and don't need downloading:
+Terraform has **one** built-in provider today:
 
-- `terraform` provider — exposes `terraform_remote_state` data source
-- These are the exception; everything else is an external plugin
+- `terraform.io/builtin/terraform` (local name usually `terraform`)
+
+What that built-in provider gives you:
+
+- `terraform_remote_state` data source (always available via the built-in provider)
+- Provider-defined functions in modern Terraform (for example: `provider::terraform::encode_tfvars`, `decode_tfvars`, `encode_expr`)
+
+Important clarifications:
+
+- You do **not** install the built-in provider via `terraform init` the way you install normal providers.
+- Older docs/configs may mention `hashicorp/terraform`; that's legacy and should not be used in modern Terraform.
+- Everything else (AWS, AzureRM, Google, Kubernetes, Random, Null, TLS, HTTP, etc.) is an **external plugin provider** downloaded separately.
 
 ---
 
@@ -174,6 +184,11 @@ terraform providers schema -json | jq '.provider_schemas | keys'
 | How Terraform Works | https://developer.hashicorp.com/terraform/intro/how-terraform-works |
 | Provider Configuration | https://developer.hashicorp.com/terraform/language/providers/configuration |
 | Provider Requirements | https://developer.hashicorp.com/terraform/language/providers/requirements |
+| Built-in Provider (`terraform.io/builtin/terraform`) | https://developer.hashicorp.com/terraform/language/providers/requirements#built-in-providers |
+| `terraform_remote_state` Data Source | https://developer.hashicorp.com/terraform/language/state/remote-state-data |
+| Built-in Provider Function: `encode_tfvars` | https://developer.hashicorp.com/terraform/language/functions/terraform-encode_tfvars |
+| Built-in Provider Function: `decode_tfvars` | https://developer.hashicorp.com/terraform/language/functions/terraform-decode_tfvars |
+| Built-in Provider Function: `encode_expr` | https://developer.hashicorp.com/terraform/language/functions/terraform-encode_expr |
 | Lock File | https://developer.hashicorp.com/terraform/language/files/dependency-lock |
 | Terraform Registry | https://registry.terraform.io/browse/providers |
 
