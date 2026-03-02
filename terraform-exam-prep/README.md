@@ -20,41 +20,41 @@ A hands-on, follow-along tutorial series covering every topic on the **HashiCorp
 ## Progress Tracker
 
 ### Module 1 — Why Terraform?
-- [ ] [01 — Use Cases](./01-use-cases.md)
-- [ ] [02 — Core and Plugins](./02-core-and-plugins.md)
+- [ ] [01 — Use Cases](./notes/01-use-cases.md)
+- [ ] [02 — Core and Plugins](./notes/02-core-and-plugins.md)
 
 ### Module 2 — Getting Started
-- [ ] [03 — Install](./03-install.md)
-- [ ] [04 — Up and Running](./04-up-and-running.md)
-- [ ] [05 — CLI and Configuration](./05-cli-and-configuration.md)
+- [ ] [03 — Install](./notes/03-install.md)
+- [ ] [04 — Up and Running](./notes/04-up-and-running.md)
+- [ ] [05 — CLI and Configuration](./notes/05-cli-and-configuration.md)
 
 ### Module 3 — The Core Workflow
-- [ ] [06 — Terraform Lifecycle](./06-terraform-lifecycle.md)
-- [ ] [07 — Init](./07-init.md)
-- [ ] [08 — Plan and Apply](./08-plan-and-apply.md)
+- [ ] [06 — Terraform Lifecycle](./notes/06-terraform-lifecycle.md)
+- [ ] [07 — Init](./notes/07-init.md)
+- [ ] [08 — Plan and Apply](./notes/08-plan-and-apply.md)
 
 ### Module 4 — Change Management
-- [ ] [09 — Execution Plans](./09-execution-plans.md)
-- [ ] [10 — Visualizing Execution Plans](./10-visualizing-execution-plans.md)
-- [ ] [11 — Resource Graph](./11-resource-graph.md)
-- [ ] [12 — Change Automation](./12-change-automation.md)
-- [ ] [13 — Apply Update](./13-apply-update.md)
+- [ ] [09 — Execution Plans](./notes/09-execution-plans.md)
+- [ ] [10 — Visualizing Execution Plans](./notes/10-visualizing-execution-plans.md)
+- [ ] [11 — Resource Graph](./notes/11-resource-graph.md)
+- [ ] [12 — Change Automation](./notes/12-change-automation.md)
+- [ ] [13 — Apply Update](./notes/13-apply-update.md)
 
 ### Module 5 — Configuration Language
-- [ ] [14 — Input Variables](./14-input-variables.md)
-- [ ] [15 — Local Values](./15-local-values.md)
-- [ ] [16 — Outputs](./16-outputs.md)
-- [ ] [17 — Divide Files](./17-divide-files.md)
-- [ ] [18 — Modules](./18-modules.md)
+- [ ] [14 — Input Variables](./notes/14-input-variables.md)
+- [ ] [15 — Local Values](./notes/15-local-values.md)
+- [ ] [16 — Outputs](./notes/16-outputs.md)
+- [ ] [17 — Divide Files](./notes/17-divide-files.md)
+- [ ] [18 — Modules](./notes/18-modules.md)
 
 ### Module 6 — Operations and Maintenance
-- [ ] [19 — Best Practices](./19-best-practices.md)
-- [ ] [20 — Destroy](./20-destroy.md)
+- [ ] [19 — Best Practices](./notes/19-best-practices.md)
+- [ ] [20 — Destroy](./notes/20-destroy.md)
 
 ### Module 7 — HCP Terraform (Cloud)
-- [ ] [21 — Cloud](./21-cloud.md)
-- [ ] [22 — Cloud Updated](./22-cloud-updated.md)
-- [ ] [23 — Cleanup](./23-cleanup.md)
+- [ ] [21 — Cloud](./notes/21-cloud.md)
+- [ ] [22 — Cloud Updated](./notes/22-cloud-updated.md)
+- [ ] [23 — Cleanup](./notes/23-cleanup.md)
 
 ---
 
